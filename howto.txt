@@ -26,7 +26,7 @@ export class ChatComponent {
   sendPrompt() {
     this.loading = true;
     const headers = new HttpHeaders({
-      'Authorization': 'Bearer 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',
+      'Authorization': 'Bearer ',
       'Content-Type': 'application/json'
     });
 
