@@ -1,0 +1,15 @@
+<div class="creator-legend">
+  <em>Esta abominacion fue creada por Rodrigo Lebuy con Angular , y usando modelos de inteligecia artifical pero con mi adaptacion personal</em>
+</div>
+<div class="chat-container">
+  <h2>Consulta a la Inteligencia Artesanal</h2>
+  <textarea [(ngModel)]="prompt" placeholder="Escribe tu pregunta..." rows="4"></textarea>
+  <button (click)="sendPrompt()" [disabled]="loading">Ponte a rezar</button>
+  <div *ngIf="loading" class="loading-message">
+    Dame tiempo, que soy Artesanal no mas  y tengo que pensar dos a tres veces antes de responderte cualquier cosa
+  </div>
+  <div class="response" *ngIf="response">
+    <strong>Respuesta:</strong>
+    <p>{{ response }}</p>
+  </div>
+</div>

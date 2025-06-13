@@ -1,0 +1,92 @@
+// Paso 1: Crear un proyecto Angular
+// Ejecuta en consola:
+// ng new openrouter-chat --style=scss --routing=false
+// cd openrouter-chat
+
+// Paso 2: Crear un componente para el chat
+// ng g c chat
+
+// Paso 3: Reemplaza el contenido del componente chat.component.ts
+
+import { Component } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+
+@Component({
+  selector: 'app-chat',
+  templateUrl: './chat.component.html',
+  styleUrls: ['./chat.component.scss']
+})
+export class ChatComponent {
+  prompt = '';
+  response = '';
+  loading = false;
+
+  constructor(private http: HttpClient) {}
+
+  sendPrompt() {
+    this.loading = true;
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer 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',
+      'Content-Type': 'application/json'
+    });
+
+    const body = {
+      model: 'deepseek/deepseek-r1-0528:free',
+      messages: [
+        {
+          role: 'user',
+          content: this.prompt
+        }
+      ]
+    };
+
+    this.http.post<any>('https://openrouter.ai/api/v1/chat/completions', body, { headers })
+      .subscribe({
+        next: (res) => {
+          this.response = res.choices?.[0]?.message?.content || 'Sin respuesta';
+          this.loading = false;
+        },
+        error: (err) => {
+          this.response = 'Error al consultar la IA';
+          this.loading = false;
+        }
+      });
+  }
+}
+
+// Paso 4: chat.component.html
+// Reemplaza con:
+
+<div class="chat-container">
+  <h2>Consulta a la IA</h2>
+  <textarea [(ngModel)]="prompt" placeholder="Escribe tu pregunta..." rows="4"></textarea>
+  <button (click)="sendPrompt()" [disabled]="loading">lo que sea</button>
+  <div class="response" *ngIf="response">
+    <strong>Respuesta:</strong>
+    <p>{{ response }}</p>
+  </div>
+</div>
+
+// Paso 5: Asegúrate de importar FormsModule y HttpClientModule en app.module.ts
+
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+
+import { AppComponent } from './app.component';
+import { ChatComponent } from './chat/chat.component';
+
+@NgModule({
+  declarations: [AppComponent, ChatComponent],
+  imports: [BrowserModule, FormsModule, HttpClientModule],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule {}
+
+// Paso 6: Usa el componente en app.component.html
+<app-chat></app-chat>
+
+// Paso 7: Corre la app con
+// ng serve
